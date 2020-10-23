@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<Dial>
+<Conference muted="false" 
+            beep="false"
+            statusCallbackEvent="join"
+            statusCallback="https://eoc-2020-9477.twil.io/conference_callback" 
+            statusCallbackMethod="GET">
+            <!-- Update the URL above to your own callback. -->
+  HalloweenRoom
+</Conference>
+</Dial>
+</Response>

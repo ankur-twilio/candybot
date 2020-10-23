@@ -1,0 +1,195 @@
+NOTE: See "Importing Flow Data" section at the following link for instructions: https://www.twilio.com/docs/studio/user-guide#importing-and-exporting-flows
+
+{
+  "description": "Halloween Heroes Present Internet of Treats - Studio Flow",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "next": "choose_trick_treat",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingRequest"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 290,
+          "y": -1080
+        }
+      }
+    },
+    {
+      "name": "Treat_Response",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 60,
+          "y": 40
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}",
+        "body": "We have chosen...Treat! Pick up your candy and have a sweet evening!",
+        "media_url": "https://media2.giphy.com/media/rlxvBFLZda9vW/giphy.gif?cid=2ecddca7jcge38rm2x8va2vkgrm7w60e3qcnxztlvwj4pvka&rid=giphy.gif"
+      }
+    },
+    {
+      "name": "Trick_Response",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 610,
+          "y": 40
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}",
+        "body": "We have chosen...Trick! Pick up your candy and have a spooooky evening!",
+        "media_url": "https://media0.giphy.com/media/TlK63EJxus3ajSaHJ04/giphy.gif?cid=2ecddca77bfyxfsp1g3td0pz0ktedvk6uocd1k59zlz2n9is&rid=giphy.gif"
+      }
+    },
+    {
+      "name": "choose_trick_treat",
+      "type": "run-function",
+      "transitions": [
+        {
+          "next": "welcome",
+          "event": "success"
+        },
+        {
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "service_sid": "ZSfcc06c12aee20fba86d6e25cba8bef3c",
+        "environment_sid": "ZE53c15ce5472995bc2f6ecb0d488d2a8f",
+        "offset": {
+          "x": 180,
+          "y": -920
+        },
+        "function_sid": "ZHd571cd1f09ef2bc0fc5dc004dffd7ded",
+        "url": "https://eoc-2020-9477.twil.io/imp_id"
+      }
+    },
+    {
+      "name": "welcome",
+      "type": "send-message",
+      "transitions": [
+        {
+          "next": "post_to_imp",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 240,
+          "y": -680
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}",
+        "body": "Welcome to the haunted house! Will you get a treat... or will you be tricked?"
+      }
+    },
+    {
+      "name": "trick_treat_response",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "Treat_Response",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value contains treat",
+              "arguments": [
+                "{{widgets.choose_trick_treat.body}}"
+              ],
+              "type": "contains",
+              "value": "treat"
+            }
+          ]
+        },
+        {
+          "next": "Trick_Response",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value contains trick",
+              "arguments": [
+                "{{widgets.choose_trick_treat.body}}"
+              ],
+              "type": "contains",
+              "value": "trick"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.choose_trick_treat.body}}",
+        "offset": {
+          "x": 190,
+          "y": -220
+        }
+      }
+    },
+    {
+      "name": "post_to_imp",
+      "type": "make-http-request",
+      "transitions": [
+        {
+          "next": "trick_treat_response",
+          "event": "success"
+        },
+        {
+          "next": "trick_treat_response",
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 380,
+          "y": -440
+        },
+        "method": "GET",
+        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "url": "{{widgets.choose_trick_treat.body}}"
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}

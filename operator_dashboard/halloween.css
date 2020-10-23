@@ -1,0 +1,84 @@
+/**
+ *
+ * Halloween.css
+ * Twilio 2020 – Internal SE Hackathon
+ *
+ */
+
+body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #0E1229;
+}
+
+canvas.visualizer {
+  position: absolute;
+  height: 100px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background: #0E1229;
+}
+
+.halloween-container {
+  height: 80%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.call-info {
+  position: absolute;
+  height: 100px;
+  width: 100%;
+  bottom: -400px;
+  height: 40px;
+  left: 0;
+  z-index: 1;
+  background: #0E1229;
+}
+
+/**
+ *
+ * Button Styles from: https://dribbble.com/shots/6209185-BIG-Jelly-Button
+ *
+ */
+
+button.action-button {
+  cursor: pointer;
+  position: relative;
+  padding: 2.5rem 3.5rem;
+  border-radius: 5rem;
+  line-height: 2.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  border: 1px solid #012880;
+  background-image: linear-gradient(-180deg, #FF89D6 0%, #C01F9E 100%);
+  box-shadow: 0 1rem 1.25rem 0 rgba(22, 75, 195, 0.5), 0 -0.25rem 1.5rem #6e0f9b inset, 0 0.75rem 0.5rem rgba(255, 255, 255, 0.4) inset, 0 0.25rem 0.5rem 0 #b446cf inset;
+}
+
+button.action-button:hover {
+  background-image: linear-gradient(-180deg, #ff70cd 0%, #aa1b8c 100%);
+  box-shadow: 0 2rem 3rem 0 rgba(22, 75, 195, 0.5), 0 -0.25rem 1.5rem #6e0f9b inset, 0 0.75rem 0.5rem rgba(255, 255, 255, 0.4) inset, 0 0.25rem 0.5rem 0 #b446cf inset;
+}
+
+button.action-button:focus {
+  background-image: linear-gradient(-180deg, #ff3dbb 0%, #7e1468 100%);
+  box-shadow: 0 2rem 3rem 0 rgba(22, 75, 195, 0.5), 0 -0.25rem 1.5rem #6e0f9b inset, 0 0.75rem 0.5rem rgba(255, 255, 255, 0.4) inset, 0 0.25rem 0.5rem 0 #b446cf inset;
+}
+
+button.action-button span {
+  color: transparent;
+  background-image: linear-gradient(0deg, #EE82DA 0%, #FEFAFD 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-filter: drop-shadow(0 2px 2px #550066);
+          filter: drop-shadow(0 2px 2px #550066);
+}
