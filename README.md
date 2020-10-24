@@ -54,7 +54,7 @@ First, we recommend reading through [our project blog post](NEED LINK TO BLOG PO
 	* Update the top of ```halloween.js``` with the public URLs of your ```voice_token.js``` and ```soundboard.js``` functions.
 	* Visit index.html locally or where you have it hosted. 
 	* Scroll to the bottom of the page and click "Connect" to connect the dashboard to your phone.
-	* Now from within the Operator Dashboard, you can send the halloween sounds to your phone. We receommend placing the phone hidden under the dispenser, perhaps connected to a large bluetooth speaker.
+	* Now from within the Operator Dashboard, you can send the halloween sounds to your phone. We suggest placing the phone hidden under the dispenser, perhaps connected to a large bluetooth speaker.
 	* Now, trigger candy and sounds by using the buttons on the dashboard.
 
 ### Thoughts on Scale & Future Advancements
