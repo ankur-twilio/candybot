@@ -15,10 +15,10 @@ $(document).ready(function () {
   let conferenceSid;
 
   //!!!!!Change the line below!!!!!
-  const voiceTokenUrl = 'https://YOUR_TWILIO_FUNC_URL/voice_client_token';
+  const voiceTokenUrl = 'https://eoc-2020-9477.twil.io/voice_client_token';
 
   //!!!!!Change the line below!!!!!
-  const soundboardTaskUrl = 'https://YOUR_TWILIO_FUNC_URL/soundboard';
+  const soundboardTaskUrl = 'https://eoc-2020-9477.twil.io/soundboard';
 
   /*----------  Start Helper Functions  ----------*/
 
