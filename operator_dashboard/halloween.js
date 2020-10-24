@@ -11,20 +11,16 @@
 
 
 $(document).ready(function () {
-  let syncClient;
   let voiceDevice;
-  const syncTokenUrl = 'https://eoc-2020-9477.twil.io/sync_token'; //Change This
-  const voiceTokenUrl = 'https://eoc-2020-9477.twil.io/voice_client_token'; //Change This
-  const syncListName = 'halloween_items'; //You don't need to change this.
+  let conferenceSid;
+
+  //!!!!!Change the line below!!!!!
+  const voiceTokenUrl = 'https://YOUR_TWILIO_FUNC_URL/voice_client_token';
+
+  //!!!!!Change the line below!!!!!
+  const soundboardTaskUrl = 'https://YOUR_TWILIO_FUNC_URL/soundboard';
 
   /*----------  Start Helper Functions  ----------*/
-  
-  function getSyncClientToken(callback) {
-    $.getJSON(syncTokenUrl)
-    .then(function (data) {
-      callback(data.token);
-    });
-  }
 
   function getVoiceClientToken(callback) {
     $.getJSON(voiceTokenUrl)
@@ -33,47 +29,33 @@ $(document).ready(function () {
     });
   }
 
-  function addSyncItem(item) {
-    syncClient.list(syncListName).then(function(list) {
-      list.push({
-        task: item,
-      }).then(function(item) {
-        console.log('Added: ', item.index);
-      }).catch(function(err) {
-        console.error(err);
-      });
+  function postSoundboardTask(task, treat = null) {
+    $.post(soundboardTaskUrl, {
+      task: task, 
+      treat: treat,
+      conference: conferenceSid
+    })
+    .then(function (data) {
+      console.log(data);
+      if (data.error) {
+        alert(data.error);
+      }
+      if (data.conference) {
+        conferenceSid = data.conference;
+      }
     });
   }
   
-  function startSync(token) {
-    syncClient = new Twilio.Sync.Client(token);
-
-    // Sync Tokens expire every 15 minutes max. So, we
-    // need to re-get a token before that happens.
-
-    syncClient.on('tokenAboutToExpire', function() {
-      var token = getSyncToken(function(token) {
-        syncClient.updateToken(token);
-      });
-    });
-  }
-
   /*----------  End Helper Functions  ----------*/
 
   /*----------  Start Realtime Services  ----------*/
-  
-  getSyncClientToken(function(token) {
-    startSync(token);
-  });
-
 
   getVoiceClientToken(function(token) {
     voiceDevice = new Twilio.Device(token);
     voiceDevice.on("connect", function(connection) {
-
+      connection.mute(true);
       // This is a nice to have. We use the remote MediaStream
       // to show a visualization to the operator. Spooky!
-
       let stream = connection.getRemoteStream();
       visualize(stream);
     });
@@ -88,7 +70,9 @@ $(document).ready(function () {
     // function will in turn play the "task" announcement.
 
     let task = $(this).data('task-name');
-    addSyncItem(task);
+    let treat = ($(this).data('treat')) ? true : null;
+    console.log(treat);
+    postSoundboardTask(task, treat);
 
     this.blur(); // Cosmetic
   });
