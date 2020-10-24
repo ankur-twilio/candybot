@@ -12,12 +12,7 @@
   let twiml = new Twilio.twiml.VoiceResponse();
 
   const dial = twiml.dial();
-  dial.conference({
-      muted: true,
-      statusCallback: '/*put the path to your conference_callback.js function here*/',
-      statusCallbackEvent: 'join',
-      statusCallbackMethod: 'GET'
-  }, 'HalloweenRoom');
+  dial.conference(conext.CONFERENCE_ROOM_NAME);
 
   callback(null, twiml);
 };

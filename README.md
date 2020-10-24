@@ -27,48 +27,42 @@ First, we recommend reading through [our project blog post](NEED LINK TO BLOG PO
 
 0. Check the blog post above for details on creating and configuring the dispenser if you wish. You can still test the Twilio and Imp code without crafting a dispenser.
 1. Copy the ```internetoftreats.device.nut``` code and the ```internetoftreats.agent.nut``` code from the ```/electric_imp``` folder to the respective Agent and Device sections of the Imp Console.
-2. Import all 6 of the .js functions from ```/twilio_functions``` to a [Twilio Functions service](https://www.twilio.com/console/functions/overview/services).
-	* Update line 17 of ```voice_twiml.js``` function to point to your ```conference_callback.js``` function's public URL. 
+2. Import all 4 of the .js functions from ```/twilio_functions``` to a [Twilio Functions service](https://www.twilio.com/console/functions/overview/services).
 	* Add ```axios``` as a dependency to the Function service.
 	* Make sure to set all the functions to public.
 	* Hit Deploy All after you add all functions and dependencies.
 3. Next, we need to create some additional Twilio services: 
-	* A) Create [1 Sync Service](https://www.twilio.com/console/sync/services) – set its webhook to point to the public URL of your ```sync_webhook_handler.js``` function. Save this Sync SID for step 4. 
-	* B) Create [1 TwiML App](https://www.twilio.com/console/voice/twiml/apps/create) – set the Voice url to point to your ```voice_twiml.js``` function. Save the App SID for Step 4. 
-	* C) Create [2 TwiML Bins](https://www.twilio.com/console/twiml-bins/create) – see ```/twilio_bins``` for .xml files. 
-		* Update the callback within ```pstn_conference_init.xml``` to point to the URL of your ```conference_callback.js``` function.
-	* D) Create [1 API Key](https://www.twilio.com/console/voice/settings/api-keys/create) (Save the API Key SID and API Secret for Step 4)
-	* E) Create [1 Phone Number](https://www.twilio.com/console/phone-numbers/search)
+	* A) Create [1 TwiML App](https://www.twilio.com/console/voice/twiml/apps/create) – set the Voice url to point to your ```voice_twiml.js``` function. Save the App SID for Step 4. 
+	* B) Create [1 TwiML Bin](https://www.twilio.com/console/twiml-bins/create) – see ```/twilio_bins``` for the .xml file. Save the Bin SID for Step 4.
+	* C) Create [1 API Key](https://www.twilio.com/console/voice/settings/api-keys/create). Save the SID and Secret for Step 4.
+	* D) Create [1 Phone Number](https://www.twilio.com/console/phone-numbers/search)
 4. Return to your [Functions service](https://www.twilio.com/console/functions/overview/services) and add the following environment variables:
-	* ```IMP_ID``` is your Imp Agent ID which can be found from https://impcentral.electricimp.com/ide/ and then click on devices. Navigate into your device, and you will see: "Agent ID"
-	* ```SYNC_SID``` from Step 3A.
-	* ```SYNC_DOC``` set this to "HalloweenDocument" without quotes. 
-	* ```TWIML_APPLICATION_SID``` from Step 3B. 
-	* ```ANNOUNCEMENTS_BIN_SID``` should point to the SID of the TwiML bin ```conference_announce.xml``` from Step 3C.
-	* ```API_KEY``` and ```API_SECRET``` from Step 3D.
+	* ```IMP_AGENT_ID``` – your Imp Agent ID. Found from https://impcentral.electricimp.com/ide/ and then click on devices. Navigate into your device, and you will see: "Agent ID"
+	* ```TWIML_APPLICATION_SID``` – TwiML App SID from Step 3A. 
+	* ```ANNOUNCEMENTS_BIN_SID``` – TwiML Bin SID from Step 3B.
+	* ```API_KEY``` and ```API_SECRET``` – API Key info from Step 3C.
+	* ```CONFERENCE_ROOM_NAME``` – set it to ```HalloweenRoom```
 5. Create a blank [Studio Flow](https://www.twilio.com/console/studio/flows). 
 	* Import ```studioflow.json``` from ```/twilio_studio``` directory. Instructions on how to import a JSON file into Studio are in the "Importing Flows" section here: https://www.twilio.com/docs/studio/user-guide#importing-and-exporting-flows
 	* You will need to update the Run Function reference function to point to the ```imp_api.js``` function.
-6. Configure your Twilio Phone Number to hit the Studio Flow for Messaging and to hit the TwiML Bin ```pstn_conference_init``` for Voice.
+6. Configure your Twilio Phone Number to hit the Studio Flow for Messaging and to hit the ```voice_twiml.js``` Function for Voice.
 7. YOU DID IT! To activate the dispenser, you can text your Twilio Number. See your Imp in action! Note: If you didn't choose to create a dispenser following our [dedicated blog post](https://docs.google.com/document/d/1fY5S2Kl-1uOMibUPHjaAW9hFMA7fUzi_cV6br8jPc98/edit?usp=sharing), you will still see the ImpCentral logs tell you what "should" be happening!
-8. (Advanced) With our web-based operator portal, you can control the dispenser in a real-time voice fashion. The operator portal is a HTML/CSS/JS combo that needs to be hosted somewhere publicly available. Follow the steps below to set it up:
-	* Run the following cURL request in terminal to create a Sync Document which will track our Operator Dashboard. Use your Sync SID from Step 3A. 
-		* ```curl 'https://sync.twilio.com/v1/Services/[YOUR_SYNC_SID_HERE]/Documents' -X POST --data-urlencode 'UniqueName=HalloweenDocument' -u [YOUR_ACC_SID_HERE]:[YOUR_AUTH_TOKEN_HERE]```
+8. ***Operator Portal Setup*** With our web-based operator portal, you can control the dispenser in a real-time voice fashion. The operator portal is a HTML/CSS/JS combo that can be run locally or from a web server. Follow the steps below to set it up:
+	* First, call your Twilio Number using your phone, enjoy the hold music. 
 	* Download the ```/operator_dashboard``` folder.
 	* In ```index.html```, update the ```halloween.css``` and ```halloween.js``` file paths to where you will have them located. 
-	* Update the top of ```halloween.js``` with the public URLs of your ```voice_token.js``` and ```sync_token.js``` functions. (In the Function editor, hit Copy URL to get those.)
-	* Upload the three files somewhere publicly accessible (or use a tool like [ngrok](https://ngrok.io))
-	* To try it out, visit index.html where you have it hosted. 
-	* Then, call your Twilio Number using your phone, enjoy the hold music. 
-	* Back on your index.html page, scroll to the bottom of the dashboard and click "Call" to connect the operator.
-	* Now from within the Operator Dashboard, you can send the halloween sounds to your phone. We receommend placing the phone hidden by the dispenser, connected to a large bluetooth speaker. You can trigger candy dispensing by using the buttons on the dashboard.
+	* Update the top of ```halloween.js``` with the public URLs of your ```voice_token.js``` and ```soundboard.js``` functions.
+	* Visit index.html locally or where you have it hosted. 
+	* Scroll to the bottom of the page and click "Connect" to connect the dashboard to your phone.
+	* Now from within the Operator Dashboard, you can send the halloween sounds to your phone. We receommend placing the phone hidden under the dispenser, perhaps connected to a large bluetooth speaker.
+	* Now, trigger candy and sounds by using the buttons on the dashboard.
 
 ### Thoughts on Scale & Future Advancements
 As a matter of practicality, Candybot is not meant to dispense candy to more than one trick-or-treater at a time. (After all, the less candy dispensed, the more left over for you!) However, the capabilities of the Imp scale far beyond the code we built during the hackathon. Many Imps have multiple ports that can be connected to additional circuits and drive more actuators, motors, or other devices. Some Imps can connect to other devices wirelessly, through WiFi or Bluetooth. You can even deploy multiple Imps with the same code to create an Imp farm of massive scale. 
 
 This project makes heavy use of Twilio’s serverless environment. All executions of Studio and Functions therefore are able to scale to meet demand. This means that no matter the load, texts and requests will go through.
 
-In the future, we hope to add additional front-end activation mechanisms on top of text messaging and our Operator Dashboard. Imagine, multiple dispensers set up in parallel automatically reacting by means of Natural Language Processing!? The possibilities are endless. All we know, is that it's time to build. 
+In the future, we hope to add additional front-end activation mechanisms on top of text messaging and our Operator Dashboard. Imagine, multiple dispensers set up in parallel automatically reacting by means of Natural Language Processing!? The possibilities are endless. Pull requests are welcome. It's time to build. 
 
 ### Contributors
 Ankit Gupta, Ankur Kumar, Richard Bakare, Patrick Hundal

@@ -10,17 +10,8 @@
  */
 
 exports.handler = async function(context, event, callback) {
-  let imp_id = context.IMP_ID;
-  let url = '';
-  
-  let trick_treat = Math.random() >= .8
-  
-  if (trick_treat == true) {   
-  	url = "https://agent.electricimp.com/" + imp_id + "?var=treat";
-  }
-  else {
-  	url = "https://agent.electricimp.com/" + imp_id + "?var=trick";
-  }
-    
+  let imp_id = context.IMP_AGENT_ID;  
+  let trick_treat = (Math.random() >= .8) ? 'treat' : 'trick';
+  let url = "https://agent.electricimp.com/" + imp_id + "?var=" + trick_treat; 
   return callback(null, url);
 }
