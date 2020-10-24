@@ -13,6 +13,7 @@
 $(document).ready(function () {
   let voiceDevice;
   let conferenceSid;
+  let stream;
 
   //!!!!!Change the line below!!!!!
   const voiceTokenUrl = 'https://eoc-2020-9477.twil.io/voice_client_token';
@@ -48,19 +49,6 @@ $(document).ready(function () {
   
   /*----------  End Helper Functions  ----------*/
 
-  /*----------  Start Realtime Services  ----------*/
-
-  getVoiceClientToken(function(token) {
-    voiceDevice = new Twilio.Device(token);
-    voiceDevice.on("connect", function(connection) {
-      connection.mute(true);
-      // This is a nice to have. We use the remote MediaStream
-      // to show a visualization to the operator. Spooky!
-      let stream = connection.getRemoteStream();
-      visualize(stream);
-    });
-  });
-
   /*----------  Register Button Handlers  ----------*/
   
   $('.action-button').on('click', function() {
@@ -78,14 +66,21 @@ $(document).ready(function () {
   });
 
   $('#button-call').on('click', function() {
-    if (voiceDevice) {
+    let conn;
 
-      // All we need to do is connect because the TwiML App for this
-      // client identity puts the client directly into a conference
-      // room where our PSTN call will be waiting :)
-
-      var outgoingConnection = voiceDevice.connect();
-    }
+    getVoiceClientToken(function(token) {
+      voiceDevice = new Twilio.Device(token);
+      voiceDevice.connect();
+      voiceDevice.on("connect", function(connection) {
+        connection.mute(true);
+        connection.on("volume", function() {
+          if (stream == null) {
+            stream = connection.getRemoteStream();
+            visualize(stream);
+          }
+        }); // End on('volume')
+      }); // End on('connect')
+    }); // End getVoiceClientToken
   });
 });
 
@@ -101,11 +96,9 @@ let audioCtx;
 
 function visualize(stream) {
   if(!audioCtx) {
-    audioCtx = new AudioContext();
+    audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])();
   }
-
   const source = audioCtx.createMediaStreamSource(stream);
-
   const analyser = audioCtx.createAnalyser();
   analyser.fftSize = 2048;
   const bufferLength = analyser.frequencyBinCount;
