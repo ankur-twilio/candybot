@@ -66,11 +66,11 @@ $(document).ready(function () {
   });
 
   $('#button-call').on('click', function() {
-    let conn;
-
     getVoiceClientToken(function(token) {
       voiceDevice = new Twilio.Device(token);
-      voiceDevice.connect();
+      voiceDevice.on("ready", function(device) {
+        device.connect();
+      });
       voiceDevice.on("connect", function(connection) {
         connection.mute(true);
         connection.on("volume", function() {
@@ -80,6 +80,7 @@ $(document).ready(function () {
           }
         }); // End on('volume')
       }); // End on('connect')
+      $('#button-call').hide();
     }); // End getVoiceClientToken
   });
 });
@@ -104,8 +105,8 @@ function visualize(stream) {
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
-  source.connect(analyser);
-  //analyser.connect(audioCtx.destination);
+  // source.connect(analyser);
+  analyser.connect(audioCtx.destination);
 
   draw()
 
