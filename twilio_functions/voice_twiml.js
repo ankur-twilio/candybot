@@ -12,7 +12,7 @@
   let twiml = new Twilio.twiml.VoiceResponse();
 
   const dial = twiml.dial();
-  dial.conference(conext.CONFERENCE_ROOM_NAME);
+  dial.conference(context.CONFERENCE_ROOM_NAME);
 
   callback(null, twiml);
 };
