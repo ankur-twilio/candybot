@@ -8,20 +8,33 @@
  * Twilio Voice Client and Twilio Sync Client. Enjoy!
  *
  */
-
-
 $(document).ready(function () {
+  let syncClient;
   let voiceDevice;
   let conferenceSid;
   let stream;
 
   //!!!!!Change the line below!!!!!
-  const voiceTokenUrl = 'https://eoc-2020-9477.twil.io/voice_client_token';
+  const voiceTokenUrl = 'https://eoc-2020-9477.twil.io/voice_client_token'; //Change This
 
   //!!!!!Change the line below!!!!!
-  const soundboardTaskUrl = 'https://eoc-2020-9477.twil.io/soundboard';
+  const soundboardTaskUrl = 'https://eoc-2020-9477.twil.io/soundboard'; //Change This
+
+  //(Advanced) IBM Watson Auto-Treat Detection
+  //!!!!!Change the line below!!!!!
+  const syncTokenUrl = 'https://eoc-2020-9477.twil.io/sync_token'; //Change This
+  const syncList = 'halloween_items'; // No need to change
+  const autoTreatTask = 'dispensing'; // No need to change
+  const autoGreetingsTask = 'greetings';// No need to change
 
   /*----------  Start Helper Functions  ----------*/
+
+  function getSyncClientToken(callback) {
+    $.getJSON(syncTokenUrl)
+    .then(function (data) {
+      callback(data.token);
+    });
+  }
 
   function getVoiceClientToken(callback) {
     $.getJSON(voiceTokenUrl)
@@ -46,8 +59,70 @@ $(document).ready(function () {
       }
     });
   }
+
+  async function autoTreatAlert() {
+    postSoundboardTask(autoGreetingsTask, true);
+    const response = await Swal.fire({
+      title: 'Trick-or-Treat Auto-Detected!!',
+      html: 'Auto-release in <strong></strong> seconds.<br/><br/>',
+      timer: 4000,
+      showCancelButton: true,
+      willOpen: () => {
+        const content = Swal.getContent()
+        const $ = content.querySelector.bind(content)
+
+        Swal.showLoading()
+
+        timerInterval = setInterval(() => {
+          Swal.getContent().querySelector('strong')
+            .textContent = (Swal.getTimerLeft() / 1000)
+              .toFixed(0)
+        }, 100)
+      },
+      willClose: () => {
+        clearInterval(timerInterval)
+      }
+    })
+
+    if (response.dismiss != "cancel") {
+      return autoTreat()
+    }
+  }
+
+  function autoTreat() {
+    return postSoundboardTask(autoTreatTask, true);
+  }
+
+  function startSync(token) {
+    console.log('Starting sync...');
+    syncClient = new Twilio.Sync.Client(token);
+
+    // Sync Tokens expire every 15 minutes max. So, we
+    // need to re-get a token before that happens.
+
+    syncClient.on('tokenAboutToExpire', function() {
+      var token = getSyncToken(function(token) {
+        syncClient.updateToken(token);
+      });
+    });
+
+    syncClient.list(syncList).then(function(list) {
+      list.on('itemAdded', function(result) {
+        autoTreatAlert();
+      });
+    });
+  }
   
   /*----------  End Helper Functions  ----------*/
+
+  /*----------  Start Realtime Sync  ----------*/
+
+
+  if (location.origin !== "file://") { // Sync can not work when used here. 
+    getSyncClientToken(function(token) {
+      startSync(token);
+    });
+  }
 
   /*----------  Register Button Handlers  ----------*/
   
@@ -105,8 +180,8 @@ function visualize(stream) {
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
-  // source.connect(analyser);
-  analyser.connect(audioCtx.destination);
+  source.connect(analyser);
+  // analyser.connect(audioCtx.destination);
 
   draw()
 

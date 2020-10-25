@@ -21,7 +21,7 @@ At a high level, the robot works like this:
 1. Create an Electric Imp account with a Electric Imp Explorer Kit following the steps in the [Imp Getting Started guide](https://developer.electricimp.com/gettingstarted/explorer).
 2. Create a Twilio account at https://twilio.com.
 
-### Setup Instructions
+### Basic Setup Instructions
 
 First, we recommend reading through [our project blog post](NEED LINK TO BLOG POST HERE) which goes into more detail.
 
@@ -47,15 +47,36 @@ First, we recommend reading through [our project blog post](NEED LINK TO BLOG PO
 	* You will need to update the Run Function reference function to point to the ```imp_api.js``` function.
 6. Configure your Twilio Phone Number to hit the Studio Flow for Messaging and to hit the ```voice_twiml.js``` Function for Voice.
 7. YOU DID IT! To activate the dispenser, you can text your Twilio Number. See your Imp in action! Note: If you didn't choose to create a dispenser following our [dedicated blog post](https://docs.google.com/document/d/1fY5S2Kl-1uOMibUPHjaAW9hFMA7fUzi_cV6br8jPc98/edit?usp=sharing), you will still see the ImpCentral logs tell you what "should" be happening!
-8. ***Operator Portal Setup*** With our web-based operator portal, you can control the dispenser in a real-time voice fashion. The operator portal is a HTML/CSS/JS combo that can be run locally or from a web server. Follow the steps below to set it up:
-	* First, call your Twilio Number using your phone, enjoy the hold music. 
-	* Download the ```/operator_dashboard``` folder.
-	* In ```index.html```, update the ```halloween.css``` and ```halloween.js``` file paths to where you will have them located. 
-	* Update the top of ```halloween.js``` with the public URLs of your ```voice_token.js``` and ```soundboard.js``` functions.
-	* Visit index.html locally or where you have it hosted. 
-	* Scroll to the bottom of the page and click "Connect" to connect the dashboard to your phone.
-	* Now from within the Operator Dashboard, you can send the halloween sounds to your phone. We suggest placing the phone hidden under the dispenser, perhaps connected to a large bluetooth speaker.
-	* Now, trigger candy and sounds by using the buttons on the dashboard.
+
+### Operator Portal Setup Instructions
+
+With our web-based operator portal, you can control the dispenser in a real-time voice fashion. The operator portal is a HTML/CSS/JS combo that can be run locally or from a web server. Follow the steps below to set it up:
+
+1. Call your Twilio Number using your phone, enjoy the hold music. 
+2. Download the ```/operator_dashboard``` folder.
+3. In ```index.html```, update the ```halloween.css``` and ```halloween.js``` file paths to where you will have them located. 
+4. Update the top of ```halloween.js``` with the public URLs of your ```voice_token.js``` and ```soundboard.js``` functions.
+5. Visit index.html locally or where you have it hosted. 
+6. Scroll to the bottom of the page and click "Connect" to connect the dashboard to your phone.
+7. Now from within the Operator Dashboard, you can send the halloween sounds to your phone. We suggest placing the phone hidden under the dispenser, perhaps connected to a large bluetooth speaker.
+8. Now, trigger candy and sounds by using the buttons on the dashboard.
+
+### Operator Portal Advanced IBM Watson Detection Setup
+Auto-detect "Trick or Treat" with IBM Watson! Shout out to https://github.com/twilio/media-streams/tree/master/node/keyword-detection for the base code for this cool feature.
+
+
+1. Add the Functions from ```/twilio_functions/optional_imb_watson/``` to Twilio
+2. Download ```/operator_dashboard_audio_analyzer``` folder.
+	* Create ```.env``` and put a link to your new ```watson_endpoint.js``` Twilio Function
+3. Set up an IBM Cloud Resource. https://cloud.ibm.com/catalog/services/speech-to-text. On the Credentials card choose the Download link. Save the file ibm-credentials.env in the folder you just downloaded.
+4. Run ```npm install``` within the folder.
+5. Run ```npm start```
+6. Start ngrok ```ngrok http 8080```
+7. Update your Twilio Functions env to include:
+	* ```MEDIA_STREAM_URL``` as ```wss://<Your ngrok host name here>.ngrok.io/media```
+	* ```SYNC_SID``` to the SID of a Twilio Sync Service you create
+	* ```SYNC_LIST``` to ```halloween_items```
+
 
 ### Thoughts on Scale & Future Advancements
 As a matter of practicality, Candybot is not meant to dispense candy to more than one trick-or-treater at a time. (After all, the less candy dispensed, the more left over for you!) However, the capabilities of the Imp scale far beyond the code we built during the hackathon. Many Imps have multiple ports that can be connected to additional circuits and drive more actuators, motors, or other devices. Some Imps can connect to other devices wirelessly, through WiFi or Bluetooth. You can even deploy multiple Imps with the same code to create an Imp farm of massive scale. 

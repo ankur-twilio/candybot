@@ -5,3 +5,4 @@ node_modules/
 .DS_Store
 .vscode
 *.log
+operator_dashboard_audio_analyzer/ibm-credentials.env

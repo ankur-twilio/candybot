@@ -1,0 +1,72 @@
+const env = require('dotenv').config();
+const express = require('express');
+const expressWebSocket = require('express-ws');
+const websocketStream = require('websocket-stream/stream');
+const SpeechToText = require('watson-developer-cloud/speech-to-text/v1');
+const Transform = require('stream').Transform;
+const axios = require('axios');
+const app = express();
+const PORT = 8080;
+const twilio_function_url = process.env.TWILIO_FUNCTION_URL;
+
+
+// extend express app with app.ws()
+expressWebSocket(app, null, {
+    perMessageDeflate: false,
+});
+
+const keywords = ["trick", "treat"];
+
+const speechToText = new SpeechToText();
+
+app.ws("/media", (ws, req) => {
+  // Wrap the websocket in a Node stream
+  const mediaStream = websocketStream(ws);
+  // Data sent through websocket is a JSON string with a payload that is base64 encoded
+  const mediaDecoderStream = new Transform({
+    transform: (chunk, encoding, callback) => {
+      const msg = JSON.parse(chunk.toString('utf8'));
+      // Only process media messages
+      if (msg.event !== "media") return callback();
+      return callback(null, Buffer.from(msg.media.payload, 'base64'));
+    }
+  });
+  // Set up a connected websocket stream to IBM Cloud
+  const recognizeStream = speechToText.recognizeUsingWebSocket({
+    content_type: "audio/mulaw;rate=8000",
+    model: "en-US_NarrowbandModel",
+    keywords: keywords,
+    keywords_threshold: 0.2,
+    inactivity_timeout: -1,
+    interim_results:true,
+    readableObjectMode: true,
+  });
+  // Connect the pipes
+  mediaStream
+    .pipe(mediaDecoderStream)
+    .pipe(recognizeStream);
+  // Process the results that IBM sends back
+  recognizeStream.on('data', msg => {
+    msg.results.forEach(result => {
+      console.log(result.alternatives[0].transcript);
+      if (result.keywords_result) {
+        if (Object.keys(result.keywords_result).length) {
+          updateSync();
+        }
+
+        Object.keys(result.keywords_result).forEach(keyword => {
+          console.log(`Keyword detected "${keyword}": ${result.alternatives[0].transcript}`);
+        }); 
+      }
+    });
+  });
+
+  const updateSync = function() {
+    console.log('Triggered! Updating sync...');
+    return axios.get(twilio_function_url);
+  }
+  
+});
+
+console.log(`WebSocket server is listening on localhost:${PORT}`);
+app.listen(PORT);
