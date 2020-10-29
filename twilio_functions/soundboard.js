@@ -20,14 +20,14 @@ exports.handler = async function(context, event, callback) {
   response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
   response.appendHeader("Content-Type", "application/json");
 
-  let task = event.task;
+  let file = event.file;
       
   getInProgressConference().then(async function(conferences) {
     if (!conferences.length) {
       return handleError('No In-Progress Conferences Found');
     }
     let conferenceSid = conferences[0].sid;
-    let bin = 'https://handler.twilio.com/twiml/'+binSID+'?file='+task;
+    let bin = 'https://handler.twilio.com/twiml/'+binSID+'?file='+file;
     await client.conferences(conferenceSid).update({announceUrl: bin}).catch((error) => handleError(error));
     
     if (event.treat) {

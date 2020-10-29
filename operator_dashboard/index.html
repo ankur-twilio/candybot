@@ -18,33 +18,24 @@
 <body>
 	<canvas class="visualizer"></canvas>
 
-	<!-- To add a new sound, make sure you have an asset with the task-name matching inside your account. That's it! The rest is modular. -->
+	<!-- To add a new sound, set data-sound-file to a publically accesible .mp3 or .wav file. That's it! -->
 		
 	<h1 class="scary">Operator Dashboard</h1>
-	<button class="dispense action-button" data-task-name="dispensing" data-treat="true">
+	<button class="dispense action-button" data-sound-file="https://sunglow-markhor-7907.twil.io/assets/dispensing.wav" data-treat="true">
 		<span>Dispense Treat</span>
 	</button>
 	<div class="halloween-container">
-		<button class="action-button" data-task-name="welcome-1">
-			<span>Welcome 1</span>
+		<button class="action-button" data-sound-file="https://sunglow-markhor-7907.twil.io/assets/welcome-3.wav">
+			<span>Spooky</span>
 		</button>
-		<button class="action-button" data-task-name="welcome-2">
-			<span>Welcome 2</span>
+		<button class="action-button" data-sound-file="https://sunglow-markhor-7907.twil.io/assets/scary_laugh.wav">
+			<span>Laughing</span>
 		</button>
-		<button class="action-button" data-task-name="welcome-3">
-			<span>Welcome 3</span>
+		<button class="action-button" data-sound-file="https://sunglow-markhor-7907.twil.io/assets/welcome-1.wav">
+			<span>Scary</span>
 		</button>
-		<button class="action-button" data-task-name="instructions_1">
-			<span>Help 1</span>
-		</button>
-		<button class="action-button" data-task-name="instructions_2">
-			<span>Help 2</span>
-		</button>
-		<button class="action-button" data-task-name="heckle_1">
+		<button class="action-button" data-sound-file="https://sunglow-markhor-7907.twil.io/assets/heckle_1.wav">
 			<span>Heckle</span>
-		</button>
-		<button class="action-button" data-task-name="scare_1">
-			<span>Scare</span>
 		</button>
 	</div>
 

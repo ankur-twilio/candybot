@@ -23,9 +23,11 @@ $(document).ready(function () {
   //(Advanced) IBM Watson Auto-Treat Detection
   //!!!!!Change the line below!!!!!
   const syncTokenUrl = 'https://eoc-2020-9477.twil.io/sync_token'; //Change This
+  
+
   const syncList = 'halloween_items'; // No need to change
-  const autoTreatTask = 'dispensing'; // No need to change
-  const autoGreetingsTask = 'greetings';// No need to change
+  const autoTreatFile = 'https://sunglow-markhor-7907.twil.io/assets/dispensing.wav'; // No need to change
+  const autoGreetingFile = 'https://sunglow-markhor-7907.twil.io/assets/greetings.wav';// No need to change
 
   /*----------  Start Helper Functions  ----------*/
 
@@ -43,9 +45,9 @@ $(document).ready(function () {
     });
   }
 
-  function postSoundboardTask(task, treat = null) {
+  function postSoundboardTask(file, treat = null) {
     $.post(soundboardTaskUrl, {
-      task: task, 
+      file: file, 
       treat: treat,
       conference: conferenceSid
     })
@@ -61,7 +63,7 @@ $(document).ready(function () {
   }
 
   async function autoTreatAlert() {
-    postSoundboardTask(autoGreetingsTask, true);
+    postSoundboardTask(autoGreetingFile, true);
     const response = await Swal.fire({
       title: 'Trick-or-Treat Auto-Detected!!',
       html: 'Auto-release in <strong></strong> seconds.<br/><br/>',
@@ -90,7 +92,7 @@ $(document).ready(function () {
   }
 
   function autoTreat() {
-    return postSoundboardTask(autoTreatTask, true);
+    return postSoundboardTask(autoTreatFile, true);
   }
 
   function startSync(token) {
@@ -132,10 +134,9 @@ $(document).ready(function () {
     // this Sync Service pointed to a Twilio Function. That
     // function will in turn play the "task" announcement.
 
-    let task = $(this).data('task-name');
+    let file = $(this).data('sound-file');
     let treat = ($(this).data('treat')) ? true : null;
-    console.log(treat);
-    postSoundboardTask(task, treat);
+    postSoundboardTask(file, treat);
 
     this.blur(); // Cosmetic
   });

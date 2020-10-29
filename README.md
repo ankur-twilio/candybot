@@ -65,9 +65,9 @@ With our web-based operator portal, you can control the dispenser in a real-time
 Auto-detect "Trick or Treat" with IBM Watson! Shout out to https://github.com/twilio/media-streams/tree/master/node/keyword-detection for the base code for this cool feature.
 
 
-1. Add the Functions from ```/twilio_functions/optional_imb_watson/``` to Twilio
+1. Add the Functions from ```/twilio_functions/optional_ibm_watson/``` to Twilio
 2. Download ```/operator_dashboard_audio_analyzer``` folder.
-	* Create ```.env``` and put a link to your new ```watson_endpoint.js``` Twilio Function
+	* In this folder, create a file named ```.env``` and add ```TWILIO_FUNCTION_URL``` set to equal the link to your new ```watson_endpoint.js``` Twilio Function
 3. Set up an IBM Cloud Resource. https://cloud.ibm.com/catalog/services/speech-to-text. On the Credentials card choose the Download link. Save the file ibm-credentials.env in the folder you just downloaded.
 4. Run ```npm install``` within the folder.
 5. Run ```npm start```

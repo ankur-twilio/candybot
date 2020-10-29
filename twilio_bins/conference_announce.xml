@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Play>
-  	<!-- Update the base URL below if you wish to use custom sounds. -->
-    https://sunglow-markhor-7907.twil.io/assets/{{file}}.wav
-  </Play>
+  <Play>{{file}}</Play>
 </Response>
