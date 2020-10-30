@@ -23,7 +23,7 @@ At a high level, the robot works like this:
 
 ### Basic Setup Instructions
 
-First, we recommend reading through [our project blog post](NEED LINK TO BLOG POST HERE) which goes into more detail.
+First, we recommend reading through [our project blog post](https://www.twilio.com/blog/build-social-distance-candy-dispenser) which goes into more detail.
 
 0. Check the blog post above for details on creating and configuring the dispenser if you wish. You can still test the Twilio and Imp code without crafting a dispenser.
 1. Copy the ```internetoftreats.device.nut``` code and the ```internetoftreats.agent.nut``` code from the ```/electric_imp``` folder to the respective Agent and Device sections of the Imp Console.
@@ -65,9 +65,9 @@ With our web-based operator portal, you can control the dispenser in a real-time
 Auto-detect "Trick or Treat" with IBM Watson! Shout out to https://github.com/twilio/media-streams/tree/master/node/keyword-detection for the base code for this cool feature.
 
 
-1. Add the Functions from ```/twilio_functions/optional_ibm_watson/``` to Twilio
+1. Replicate the functions from ```/twilio_functions/optional_ibm_watson/``` into your Twilio Functions service from before. Set it to public, and hit deploy all. 
 2. Download ```/operator_dashboard_audio_analyzer``` folder.
-	* In this folder, create a file named ```.env``` and add ```TWILIO_FUNCTION_URL``` set to equal the link to your new ```watson_endpoint.js``` Twilio Function
+	* In this folder, create a file named ```.env``` and add ```TWILIO_FUNCTION_URL=<your_watson_endpoint.js_function_url>```. Add your watson_endpoint.js URL here. 
 3. Set up an IBM Cloud Resource. https://cloud.ibm.com/catalog/services/speech-to-text. On the Credentials card choose the Download link. Save the file ibm-credentials.env in the folder you just downloaded.
 4. Run ```npm install``` within the folder.
 5. Run ```npm start```
@@ -88,4 +88,4 @@ In the future, we hope to add additional front-end activation mechanisms on top 
 ### Contributors
 Ankit Gupta, Ankur Kumar, Richard Bakare, Patrick Hundal
 
-> Blog post: NEED LINK TO BLOG POST HERE
+> Blog post: https://www.twilio.com/blog/build-social-distance-candy-dispenser
